@@ -3,4 +3,4 @@ services:
     az-myapp-kornit:
         ports:
             - '5000:80'
-        image: az-myapp-kornit
+        image: sashaplayground/kornit-assignment-repo:az-myapp-kornit
