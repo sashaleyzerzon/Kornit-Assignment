@@ -1,0 +1,24 @@
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: Kornit-Assignment-Pipeline-Agents
+  steps:
+  - checkout: self
+    clean: true
+    fetchTags: false
+  - task: Docker@2
+    displayName: Build Docker Image and Push to Azure Container Repository
+    inputs:
+      containerRegistry: b203c008-5117-4536-9a03-26e88899f7cd
+      repository: kornit-assignment-repo
+      tags: >-
+        $(Build.BuildId)
+
+        latest
+...

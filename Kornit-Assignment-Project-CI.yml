@@ -1,0 +1,43 @@
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    name: Kornit-Assignment-Pipeline-Agents
+  steps:
+  - checkout: self
+    clean: true
+    fetchTags: false
+  - task: UseDotNet@2
+    displayName: Use .NET Core sdk 6.x
+    inputs:
+      version: 6.x
+  - task: PowerShell@2
+    displayName: Increase .csproj revision
+    inputs:
+      filePath: IncreaseRevision.ps1
+      arguments: -csprojpath $(Pipeline.Workspace)\s\myapp.csproj
+  - task: DotNetCoreCLI@2
+    displayName: dotnet restore
+    inputs:
+      command: restore
+      projects: $(Pipeline.Workspace)\s\myapp.csproj
+      feedRestore: faebad95-f75b-4c4c-82a7-a5dffd365c27
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build
+    inputs:
+      projects: $(Pipeline.Workspace)\s\myapp.csproj
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish
+    inputs:
+      command: publish
+      arguments: -c Release
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+    inputs:
+      PathtoPublish: $(Pipeline.Workspace)\s\bin\Release\net6.0\
+...
